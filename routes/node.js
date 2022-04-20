@@ -1,3 +1,4 @@
+//this route is for testing 
 const router = require("express").Router();
 const Node = require("../models/node");
 

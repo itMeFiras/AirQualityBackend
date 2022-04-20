@@ -250,7 +250,7 @@ router.post("/resetpass",async (req,res)=>{
     }
 });
 
-//get user list
+//get user list with jwt
 router.get("/list", MID.authenticateToken, async (req,res)=>{
     User.find(function(err, users) {
         if (err) {
@@ -328,7 +328,7 @@ router.get("/filter", (req,res)=>{
     });
 })
 
-//get user by token
+//get user with jwt
 router.get("/profile", MID.authenticateToken, async (req,res)=>{
     User.find(function(err, user) {
         if (err) {
