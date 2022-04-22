@@ -84,7 +84,7 @@ router.post("/register",async (req,res)=>{
 router.post("/login",async (req,res)=>{
     try{
         //find user
-        const user = await User.findOne({username:req.body.username});
+        const user = await User.findOne({$or:[{username:req.body.username},{email:req.body.username}]});
         if (!user) return res.json("wrong user/pass")
         
         //validate password
@@ -120,13 +120,15 @@ router.post("/editprofile/:id",async (req,res)=>{
     //edit 
     User.findById(id).then((user)=>{
         user.username = req.body.username;
+        user.firstname = req.body.firstname;
+        user.lastname = req.body.lastname;
         user.email = req.body.email;
         user.password = hashedpassword;
 
         user.save().then(()=>{
             return res.send({message: 'edit success'})
         }).catch((err)=>{
-            return res.send({message: err.message})
+            return res.send({message: "email is used"})
         })
     }).catch((err)=>{
         return res.send({message: err.message})
@@ -187,6 +189,28 @@ router.post("/editprofilecheck/:id",async (req,res)=>{
         return res.send({message: err.message})
     })
 })
+
+//toggel active
+router.post("/toggelActive/:id",async (req,res)=>{
+    const id = req.params.id
+
+    User.findById(id).then((user)=>{
+        if (user.active == "active"){
+            user.active = 'inactive'
+        }
+        else if(user.active == "inactive"){
+            user.active = "active"
+        }
+        user.save().then(()=>{
+            return res.send({message: `${user.active}`})
+        }).catch((err)=>{
+            return res.send({message: "error"})
+        })
+    }).catch((err)=>{
+        return res.send({message: err.message})
+    })
+})
+
 
 //delete profile
 router.delete("/deleteprofile/:id",async (req,res)=>{
