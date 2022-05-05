@@ -227,7 +227,7 @@ router.post("/resetpass",async (req,res)=>{
     try{
 
         //find user
-        var user = await User.findOne({$and:[{username:req.body.username},{email:req.body.email}]});
+        var user = await User.findOne({$or:[{username:req.body.username},{email:req.body.username}]});
         if (!user) return res.status(400).json("wrong informations")
 
         //set new password
@@ -247,10 +247,10 @@ router.post("/resetpass",async (req,res)=>{
 
         var mailverif = {
             from: process.env.sendMail,
-            to: req.body.email,
+            to: user.email,
             subject: 'Password reset',
             html: `<div style="margin: 100px;" >
-            <h4>Hello ${req.body.username},</h4>
+            <h4>Hello ${user.username},</h4>
             <h4>Thank you for using <b style="color: #ff7900;">LoRa-AirQuality-Monitoring</b></h4>
             <h4>Your Password has been successfully changed</h4>
             <h4>The new password is : <b style="color: blue;">${newpass}</b></h4>

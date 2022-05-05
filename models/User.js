@@ -6,20 +6,20 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         min:3,
-        max:20,
+        max:30,
         unique:true,
     },
     firstname: {
         required:true,
         type:String,
         min:3,
-        max:20,
+        max:30,
     },
     lastname: {
         required:true,
         type:String,
         min:3,
-        max:20,
+        max:30,
     },
     email: {
         type:String,
