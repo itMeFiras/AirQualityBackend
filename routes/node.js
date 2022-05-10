@@ -3,7 +3,7 @@ const Node = require("../models/node");
 
 //MQTT Broker connection parameters
 const mqtt = require('mqtt')  // require mqtt
-const host = /*'broker.emqx.io'*/ 'eu1.cloud.thethings.network'
+const host = process.env.mqtthost
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -13,8 +13,8 @@ const client = mqtt.connect(connectUrl, {
   clientId,
   clean: true,
   connectTimeout: 4000,
-  username: /*'emqx'*/ 'lora-esp-32@ttn',
-  password: /*'public'*/'NNSXS.BQRZDOH6LTPUP44WTWJFQKA2FIPCYX6WSTF2D5Y.3EAPYT7BVC2TBOWNT3HUI65DW76MRFWKPPX3SGUHOVJUJC5JXHNQ',
+  username: process.env.mqttuser,
+  password: process.env.mqttpass,
   reconnectPeriod: 1000,
 })
 
