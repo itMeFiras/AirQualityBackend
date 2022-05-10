@@ -31,6 +31,9 @@ const NodeSchema = new mongoose.Schema({
     tvoc: {
         type:String,
     },
+    received_at: {
+        type:String,
+    },
 },{timestamps: true});
 
 module.exports = mongoose.model("Node",NodeSchema);

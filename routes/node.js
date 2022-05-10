@@ -4,7 +4,7 @@ const Node = require("../models/node");
 
 //MQTT Broker connection parameters
 const mqtt = require('mqtt')  // require mqtt
-const host = 'broker.emqx.io'
+const host = /*'broker.emqx.io'*/ 'eu1.cloud.thethings.network'
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -14,13 +14,13 @@ const client = mqtt.connect(connectUrl, {
   clientId,
   clean: true,
   connectTimeout: 4000,
-  username: 'emqx',
-  password: 'public',
+  username: /*'emqx'*/ 'lora-esp-32@ttn',
+  password: /*'public'*/'NNSXS.BQRZDOH6LTPUP44WTWJFQKA2FIPCYX6WSTF2D5Y.3EAPYT7BVC2TBOWNT3HUI65DW76MRFWKPPX3SGUHOVJUJC5JXHNQ',
   reconnectPeriod: 1000,
 })
 
 //Subscribe to topics
-const topic = '/nodejs/mqtt'
+const topic = /*'/nodejs/mqtt'*/ '#'
 client.on('connect', () => {
   console.log('1--mqtt Connected')
   client.subscribe([topic], () => {
@@ -29,21 +29,43 @@ client.on('connect', () => {
 })
 
 //Publish messages
-client.on('connect', () => {
+/*client.on('connect', () => {
     client.publish(topic, 'this is a publishing test xD', { qos: 0, retain: false }, (error) => {
       if (error) {
         console.error(error)
       }
     })
-  })
+  })*/
 
 //receiving the message
-client.on('message', (topic, payload) => {
+client.on('message',async (topic, payload) => {
     console.log('#--Received Message:', topic, payload.toString())
+    console.log('-----------')
+    var data = JSON.parse(payload.toString())
+    console.log(data.uplink_message.decoded_payload)
+    console.log(data.uplink_message.received_at)
+
+    //create new node for the data
+    const newNode = new Node({
+      MAC: 'fablab-mac',
+      co2: data.uplink_message.decoded_payload.co2,
+      light: data.uplink_message.decoded_payload.light,
+      pm10: data.uplink_message.decoded_payload.pm10,
+      pm25: data.uplink_message.decoded_payload.pm25,
+      pressure: data.uplink_message.decoded_payload.pressure,
+      sound: data.uplink_message.decoded_payload.sound,
+      temperature: data.uplink_message.decoded_payload.temperature,
+      tvoc: data.uplink_message.decoded_payload.tvoc,
+      received_at:data.uplink_message.received_at
+    });
+
+    //save and send response
+    const node = await newNode.save();
+    //res.status(200).json({node : node, messege:'saved '});
   })
 
 //add node
-router.post("/",async (req,res)=>{
+router.post("/add",async (req,res)=>{
     const newNode = new Node(req.body);
     try{
         const savedNode = await newNode.save();
@@ -51,6 +73,17 @@ router.post("/",async (req,res)=>{
     }catch(err){
         res.status(500).json(err) 
     }
+});
+
+//get node list
+router.get("/list", async (req,res)=>{
+  Node.find(function(err, list) {
+      if (err) {
+          return res.status(500).json(err);
+      } else {
+          return res.json(list);
+      }
+  });
 });
 
 module.exports = router
