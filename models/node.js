@@ -1,4 +1,4 @@
-//this class is for testing node informations sent from fablab
+//this class is for node informations sent from fablab
 const mongoose = require("mongoose");
 const { required } = require("nodemon/lib/config");
 

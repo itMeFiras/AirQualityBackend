@@ -1,4 +1,3 @@
-//this route is for testing 
 const router = require("express").Router();
 const Node = require("../models/node");
 
@@ -42,6 +41,7 @@ client.on('message',async (topic, payload) => {
     console.log('#--Received Message:', topic, payload.toString())
     console.log('-----------')
     var data = JSON.parse(payload.toString())
+    console.log(data)
     console.log(data.uplink_message.decoded_payload)
     console.log(data.uplink_message.received_at)
 
@@ -84,6 +84,18 @@ router.get("/list", async (req,res)=>{
           return res.json(list);
       }
   });
+});
+
+//get node by mac
+router.get("/macdata",async (req,res)=>{
+  const node = await Node.find({MAC:req.body.MAC});
+  res.status(200).json(node)
+});
+
+//get last data of node by mac
+router.get("/lastmacdata",async (req,res)=>{
+  const node = await Node.find({MAC:req.body.MAC}).sort({$natural: -1}).limit(1);
+  res.status(200).json(node)
 });
 
 module.exports = router

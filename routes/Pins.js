@@ -34,7 +34,7 @@ router.get("/list", async (req,res)=>{
     });
 });
 
-//get node by token
+//get pins by token
 router.get("/node", MID.authenticateToken, async (req,res)=>{
     Pin.find(function(err, node) {
         if (err) {
@@ -45,5 +45,36 @@ router.get("/node", MID.authenticateToken, async (req,res)=>{
         }
     });
 });
+
+//edit pin
+router.post("/edit/:id",async (req,res)=>{
+    const id = req.params.id
+
+    Pin.findById(id).then((pin)=>{
+        pin.MAC = req.body.MAC;
+        pin.title = req.body.title;
+        pin.desc = req.body.desc;
+        pin.lat = req.body.lat;
+        pin.long = req.body.long;
+
+        pin.save().then(()=>{
+            return res.send({message: 'edit success'})
+        }).catch((err)=>{
+            return res.send({message: "error"})
+        })
+    }).catch((err)=>{
+        return res.send({message: err.message})
+    })
+})
+
+//delete pin
+router.delete("/delete/:id",async (req,res)=>{
+    const id = req.params.id
+    Pin.findByIdAndDelete(id).then(()=>{
+        return res.send({message: 'deleted'})
+    }).catch((err)=>{
+        return res.send({message: err.message})
+    })
+})
 
 module.exports = router

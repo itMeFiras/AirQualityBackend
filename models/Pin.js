@@ -6,6 +6,11 @@ const PinSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    MAC: {
+        type:String,
+        required:true,
+        unique:true,
+    },
     title: {
         type:String,
         required:true,
@@ -14,13 +19,7 @@ const PinSchema = new mongoose.Schema({
     desc: {
         type:String,
         required:true,
-        max:3,
-    },
-    rating: {
-        type:String,
-        required: true,
-        min:0,
-        max:5
+        max:10,
     },
     lat: {
         type:String,
