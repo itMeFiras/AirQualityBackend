@@ -41,22 +41,22 @@ client.on('message',async (topic, payload) => {
     console.log('#--Received Message:', topic, payload.toString())
     console.log('-----------')
     var data = JSON.parse(payload.toString())
-    console.log(data)
+    console.log(data.end_device_ids.dev_addr)
     console.log(data.uplink_message.decoded_payload)
     console.log(data.uplink_message.received_at)
 
     //create new node for the data
     const newNode = new Node({
-      MAC: 'fablab-mac',
-      co2: data.uplink_message.decoded_payload.co2,
-      light: data.uplink_message.decoded_payload.light,
-      pm10: data.uplink_message.decoded_payload.pm10,
-      pm25: data.uplink_message.decoded_payload.pm25,
-      pressure: data.uplink_message.decoded_payload.pressure,
-      sound: data.uplink_message.decoded_payload.sound,
-      temperature: data.uplink_message.decoded_payload.temperature,
-      tvoc: data.uplink_message.decoded_payload.tvoc,
-      received_at:data.uplink_message.received_at
+      MAC: data.end_device_ids.dev_addr,
+      co2: data.uplink_message.decoded_payload.co2 || null,
+      light: data.uplink_message.decoded_payload.light || null,
+      pm10: data.uplink_message.decoded_payload.pm10 || null,
+      pm25: data.uplink_message.decoded_payload.pm25 || null,
+      pressure: data.uplink_message.decoded_payload.pressure || null,
+      sound: data.uplink_message.decoded_payload.sound || null,
+      temperature: data.uplink_message.decoded_payload.temperature || null,
+      tvoc: data.uplink_message.decoded_payload.tvoc || null,
+      received_at:data.uplink_message.received_at || null
     });
 
     //save and send response
@@ -89,6 +89,12 @@ router.get("/list", async (req,res)=>{
 //get node by mac
 router.get("/macdata",async (req,res)=>{
   const node = await Node.find({MAC:req.body.MAC});
+  res.status(200).json(node)
+});
+
+//sherch node by mac query params
+router.get("/lastmacdata",async (req,res)=>{
+  const node = await Node.find({MAC:req.query.MAC}).sort({$natural: -1}).limit(1);
   res.status(200).json(node)
 });
 
