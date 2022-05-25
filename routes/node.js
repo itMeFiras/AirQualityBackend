@@ -88,7 +88,13 @@ router.get("/list", async (req,res)=>{
 
 //get node by mac
 router.get("/macdata",async (req,res)=>{
-  const node = await Node.find({MAC:req.body.MAC});
+  const node = await Node.find({MAC:req.body.MAC}).sort({$natural: -1});
+  res.status(200).json(node)
+});
+
+//get node by mac query params
+router.get("/macdata2",async (req,res)=>{
+  const node = await Node.find({MAC:req.query.mac}).sort({$natural: -1});
   res.status(200).json(node)
 });
 

@@ -69,7 +69,7 @@ router.post("/edit/:id",async (req,res)=>{
         pin.save().then(()=>{
             return res.send({message: 'edit success'})
         }).catch((err)=>{
-            return res.send({message: "error"})
+            return res.send({message: err.messag})
         })
     }).catch((err)=>{
         return res.send({message: err.message})
@@ -81,6 +81,27 @@ router.delete("/delete/:id",async (req,res)=>{
     const id = req.params.id
     Pin.findByIdAndDelete(id).then(()=>{
         return res.send({message: 'deleted'})
+    }).catch((err)=>{
+        return res.send({message: err.message})
+    })
+})
+
+//toggel active
+router.post("/toggelActive/:id",async (req,res)=>{
+    const id = req.params.id
+
+    Pin.findById(id).then((user)=>{
+        if (user.active == "active"){
+            user.active = 'inactive'
+        }
+        else if(user.active == "inactive"){
+            user.active = "active"
+        }
+        user.save().then(()=>{
+            return res.send({message: `${user.active}`})
+        }).catch((err)=>{
+            return res.send({message: "error"})
+        })
     }).catch((err)=>{
         return res.send({message: err.message})
     })

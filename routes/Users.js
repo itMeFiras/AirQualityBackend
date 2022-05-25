@@ -117,7 +117,7 @@ router.post("/editprofile/:id",async (req,res)=>{
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(req.body.password,salt)
 
-    //edit 
+    //edit for admin
     User.findById(id).then((user)=>{
         user.username = req.body.username;
         user.firstname = req.body.firstname;
@@ -128,7 +128,7 @@ router.post("/editprofile/:id",async (req,res)=>{
         user.save().then(()=>{
             return res.send({message: 'edit success'})
         }).catch((err)=>{
-            return res.send({message: "email is used"})
+            return res.send({message: err.message})
         })
     }).catch((err)=>{
         return res.send({message: err.message})

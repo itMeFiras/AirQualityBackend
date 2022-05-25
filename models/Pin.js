@@ -29,6 +29,11 @@ const PinSchema = new mongoose.Schema({
         type:String,
         required: true,
     },
+    active: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'inactive'
+    },
 },{timestamps: true});
 
 module.exports = mongoose.model("Pin",PinSchema);
