@@ -18,12 +18,16 @@ const RequestSchema = new mongoose.Schema({
     title: {
         type:String,
         required:true,
-        max:3,
+        min:3,
     },
     desc: {
         type:String,
         required:true,
-        max:10,
+        min:10,
+    },
+    location: {
+        type:String,
+        required: true,
     },
     lat: {
         type:String,

@@ -33,9 +33,12 @@ const UserSchema = new mongoose.Schema({
         default: 'inactive'
     },
     node: {
-        type: String,
-        enum: ['yes', 'no'],
-        default: 'no'
+        type: Number,
+        default: 0
+    },
+    request: {
+        type: Number,
+        default: 0
     },
     password: {
         type:String,
