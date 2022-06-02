@@ -205,7 +205,7 @@ router.post("/request/approve/:id",async (req,res)=>{
     const id = req.params.id
 
     ReqPin.findById(id).then((re)=>{
-        re.accept = req.body.accept;
+        re.accept = "yes";
 
         re.save().then(()=>{
             return res.send({message: `accept : ${re.accept}`})
@@ -216,5 +216,33 @@ router.post("/request/approve/:id",async (req,res)=>{
         return res.send({message: err.message})
     })
 })
+
+//deny request
+router.post("/request/deny/:id",async (req,res)=>{
+    const id = req.params.id
+
+    ReqPin.findById(id).then((re)=>{
+        re.accept = "no";
+
+        re.save().then(()=>{
+            return res.send({message: `accept : ${re.accept}`})
+        }).catch((err)=>{
+            return res.send({message: "error"})
+        })
+    }).catch((err)=>{
+        return res.send({message: err.message})
+    })
+})
+
+//get requests with jwt
+router.get("/myrequests", MID.authenticateToken, async (req,res)=>{
+    ReqPin.find(function(err, re) {
+        if (err) {
+            return res.status(500).json(err);
+        } else {
+            return res.json(re.filter(e => e.username == req.user));
+        }
+    });
+});
 
 module.exports = router
