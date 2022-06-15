@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const { required } = require("nodemon/lib/config");
 
 const PinSchema = new mongoose.Schema({
-    username: {
-        type:String,
-        required:true,
+    user: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
     MAC: {
         type:String,

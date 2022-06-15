@@ -11,7 +11,7 @@ router.get("/confirmation/:id",async (req,res)=>{
     User.findById(id).then((user)=>{
         user.active = 'active'
         user.save().then(()=>{
-            res.send({message: 'activated'})
+            res.redirect("http://localhost:4200/login")
         }).catch((err)=>{
             res.send({message: err.message})
         })
@@ -50,13 +50,15 @@ router.post("/register",async (req,res)=>{
             from: process.env.sendMail,
             to: req.body.email,
             subject: 'account activation',
-            html: `<div style="margin: 100px;" >
-            <h4>Hello ${req.body.username},</h4>
-            <h4>Thank you for joining <b style="color: #ff7900;">LoRa-AirQuality-Monitoring</b></h4>
-            <h4>We’d like to confirm that your account was created successfully.</h4>
-            <h4>Click the link below to confirm your e-mail.</h4>
-            <h4>${url}</h4>
-            <h4>The <b style="color: #ff7900;">Orange team</b>
+            html: `<div style="margin: 100px;text-align:center;border: solid 3px black;border-radius: 10px;padding:20px" >
+            <img src="./Orange_logo.png" style="height:150px; width:150px"/>
+            <h1>Welcome ${req.body.username},</h1>
+            <h3>Thank you for joining <b style="color: #ff7900;">LoRa-AirQuality-Monitoring</b></h3>
+            <h3>We’d like to confirm that your account was created successfully.</h3>
+            <h3>Click the button below to confirm your e-mail.</h3>
+            <a style="background:#ff7900; display:inline-block; color:#fff; text-decoration:none; text-transform: uppercase;
+                    font-family: Sans-serif; font-size: 18px;padding: 10px 15px 10px;" href="${url}">Activate account</a>
+            <h3>The <b style="color: #ff7900;">Orange team</b></h3>
             </div>`
         };
 
@@ -100,7 +102,7 @@ router.post("/login",async (req,res)=>{
         const accessToken = MID.generateAccessToken(user);
 
         //send res
-        return res.status(200).json({_id:user._id, username:user.username, accessToken: accessToken, messege:'ok '});
+        return res.status(200).json({_id:user._id, username:user.username,role:user.role, accessToken: accessToken, messege:'ok '});
         }
         else return res.json("this user is not active")
 

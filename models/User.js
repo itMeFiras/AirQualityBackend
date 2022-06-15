@@ -32,10 +32,11 @@ const UserSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'inactive'
     },
-    node: {
-        type: Number,
-        default: 0
-    },
+    // role: {
+    //     type: String,
+    //     enum: ['user', 'admin'],
+    //     default: 'user'
+    // },
     request: {
         type: Number,
         default: 0
