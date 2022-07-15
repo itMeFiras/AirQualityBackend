@@ -29,10 +29,15 @@ const PinSchema = new mongoose.Schema({
         type:String,
         required: true,
     },
-    active: {
+    active: { //appearing on map
         type: String,
         enum: ['active', 'inactive'],
         default: 'inactive'
+    },
+    operate: { //working or not
+        type: String,
+        enum: ['Yes', 'No'],
+        default: 'Yes'
     },
 },{timestamps: true});
 

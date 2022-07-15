@@ -67,6 +67,12 @@ router.get("/list/:id",async (req,res)=>{
     })
 });
 
+//sherch pin by mac query params
+router.get("/getbymac",async (req,res)=>{
+    const pin = await Pin.findOne({MAC:req.query.MAC});
+    res.status(200).json(pin)  
+});
+
 //add pin
 router.post("/add",MID.authenticateToken,(req,res)=>{
     User.find().then(async(pin) =>{
@@ -172,7 +178,7 @@ router.post("/request2", MID.authenticateToken, (req,res)=>{
     User.find().then(async(re) => {
         let puser = re.filter(e => e.username == req.user)
         let iduser = puser[0]._id
-        console.log(iduser) 
+        //console.log(iduser) 
 
             const newReq = await new ReqPin({
                 user :iduser,

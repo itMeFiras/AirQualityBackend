@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const Node = require("../models/node");
+const Pin = require("../models/Pin");
+const cron = require('node-cron');
 
 //MQTT Broker connection parameters
 const mqtt = require('mqtt')  // require mqtt
@@ -108,6 +110,30 @@ router.get("/lastmacdata",async (req,res)=>{
 router.get("/lastmacdata",async (req,res)=>{
   const node = await Node.find({MAC:req.body.MAC}).sort({$natural: -1}).limit(1);
   res.status(200).json(node)
+});
+
+
+//cron for the daily sheck
+cron.schedule('55 13 * * *', async() => {
+  console.log("Daily task to check Pins's status - " + new Date())
+  const pins = await Pin.find();
+  for( a of pins){
+    //console.log(a.MAC)
+    const node = await Node.findOne({MAC:a.MAC}).sort({$natural: -1}).limit(1);
+    const days = (new Date - new Date(node.received_at))/ (1000 * 3600 * 24);
+    //console.log(new Date(node.received_at))
+    //console.log(days)
+    if(days > 7){
+      const pin = await Pin.findOne({MAC:node.MAC})
+      //console.log(pin)
+      if (pin.operate == 'Yes'){
+        console.log('--> The pin in with title "'+pin.title+'" is no longer operating')
+        pin.operate = 'No'
+        pin.save()
+      }
+     
+    }
+  }
 });
 
 module.exports = router

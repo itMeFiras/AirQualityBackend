@@ -13,7 +13,7 @@ const RequestSchema = new mongoose.Schema({
     MAC: {
         type:String,
         required:true,
-        unique:true,
+        ////unique:true,
     },
     title: {
         type:String,
