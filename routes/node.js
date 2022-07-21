@@ -114,16 +114,15 @@ router.get("/lastmacdata",async (req,res)=>{
 
 
 //cron for the daily sheck
-cron.schedule('55 13 * * *', async() => {
+cron.schedule('25 14 * * *', async() => {
   console.log("Daily task to check Pins's status - " + new Date())
   const pins = await Pin.find();
+
   for( a of pins){
     //console.log(a.MAC)
     const node = await Node.findOne({MAC:a.MAC}).sort({$natural: -1}).limit(1);
     const days = (new Date - new Date(node.received_at))/ (1000 * 3600 * 24);
-    //console.log(new Date(node.received_at))
-    //console.log(days)
-    if(days > 7){
+    if(days >= 3){
       const pin = await Pin.findOne({MAC:node.MAC})
       //console.log(pin)
       if (pin.operate == 'Yes'){
@@ -131,8 +130,44 @@ cron.schedule('55 13 * * *', async() => {
         pin.operate = 'No'
         pin.save()
       }
-     
     }
+    else if(days < 3){
+      const pin = await Pin.findOne({MAC:node.MAC})
+      if (pin.operate == 'No'){
+        console.log('--> The pin in with title "'+pin.title+'" back on operating')
+        pin.operate = 'Yes'
+        pin.save()
+      }
+    }
+  }
+});
+
+//check operating node
+router.get("/checknode",async (req,res)=>{
+  try{
+    const node = await Node.findOne({MAC:req.query.MAC}).sort({$natural: -1});
+    if(node==null){
+      return res.status(200).json('This node is not operating')
+    }
+
+    const days = (new Date - new Date(node.received_at))/ (1000 * 3600 * 24);
+    const pin = await Pin.findOne({MAC:req.query.MAC})
+    if(days >= 3){
+      if (pin.operate == 'Yes'){
+        pin.operate = 'No'
+        await pin.save()
+      }
+      return res.status(200).json('This node is no longer operating')
+    }
+    else if(days < 3){
+      if (pin.operate == 'No'){
+        pin.operate = 'Yes'
+        await pin.save()
+      }
+      return res.status(200).json('The node is operating')
+    }
+  }catch(err){
+    res.status(500).json(err)
   }
 });
 

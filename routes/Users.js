@@ -38,7 +38,7 @@ router.post("/register",async (req,res)=>{
 
         //mail information
         var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: 'hotmail',
             auth: {
             user: process.env.sendMail,
             pass: process.env.sendpass
@@ -51,13 +51,13 @@ router.post("/register",async (req,res)=>{
             to: req.body.email,
             subject: 'account activation',
             html: `<div style="margin: 100px;text-align:center;border: solid 3px black;border-radius: 10px;padding:20px" >
-            <img src="./Orange_logo.png" style="height:150px; width:150px"/>
+            <img src="./orange-logo.svg" style="height:150px; width:150px"/>
             <h1>Welcome ${req.body.username},</h1>
             <h3>Thank you for joining <b style="color: #ff7900;">LoRa-AirQuality-Monitoring</b></h3>
             <h3>We’d like to confirm that your account was created successfully.</h3>
             <h3>Click the button below to confirm your e-mail.</h3>
-            <a style="background:#ff7900; display:inline-block; color:#fff; text-decoration:none; text-transform: uppercase;
-                    font-family: Sans-serif; font-size: 18px;padding: 10px 15px 10px;" href="${url}">Activate account</a>
+            <a style="background:#ff7900; display:inline-block; color:#fff; text-decoration:none; font-weight:bold;
+                    font-family: Sans-serif; font-size: 16px;padding: 10px 15px 10px;" href="${url}">Activate Account</a>
             <h3>The <b style="color: #ff7900;">Orange team</b></h3>
             </div>`
         };
@@ -240,7 +240,7 @@ router.post("/resetpass",async (req,res)=>{
 
         //send mail
         var transporter = nodemailer.createTransport({
-            service: 'gmail',
+            service: 'hotmail',
             auth: {
               user: process.env.sendMail,
               pass: process.env.sendpass

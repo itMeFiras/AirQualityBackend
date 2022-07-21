@@ -6,6 +6,7 @@ const app = express();
 const userRoute = require("./routes/users")
 const pinRoute = require("./routes/Pins")
 const nodeRoute = require("./routes/node")
+const forumRoute = require("./routes/forum")
 
 dotenv.config();
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use(cors())
 app.use("/api/pins", pinRoute);
 app.use("/api/users", userRoute);
 app.use("/api/node", nodeRoute);
+app.use("/api/forum", forumRoute);
 
 
 app.listen(PORT,()=>{

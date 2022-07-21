@@ -276,6 +276,7 @@ router.post("/request/approve/:id",async (req,res)=>{
                 desc :re.desc,
                 lat :re.lat,
                 long :re.long,
+                operate:"No"
                 })
         
                 const pin = await newPin.save()
@@ -318,13 +319,11 @@ router.post("/request/deny/:id",async (req,res)=>{
 
 //get requests with jwt
 router.get("/myrequests", MID.authenticateToken, async (req,res)=>{
-    ReqPin.find(function(err, re) {
-        if (err) {
-            return res.status(500).json(err);
-        } else {
-            return res.json(re.filter(e => e.username == req.user));
-        }
-    });
+    ReqPin.find().populate('user').then((list) => {
+        return res.json(list.filter(e => e.user.username == req.user));
+    }).catch((err) => {
+    return res.status(500).json(err);
+    })
 });
 
 module.exports = router
