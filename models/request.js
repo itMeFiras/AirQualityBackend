@@ -6,14 +6,9 @@ const RequestSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    // email: {
-    //     type:String,
-    //     required:true,
-    // },
     MAC: {
         type:String,
         required:true,
-        ////unique:true,
     },
     title: {
         type:String,
@@ -24,6 +19,10 @@ const RequestSchema = new mongoose.Schema({
         type:String,
         required:true,
         min:10,
+    },
+    email: {
+        type:String,
+        required:true,
     },
     location: {
         type:String,

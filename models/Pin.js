@@ -14,12 +14,14 @@ const PinSchema = new mongoose.Schema({
     title: {
         type:String,
         required:true,
-        max:3,
     },
     desc: {
         type:String,
         required:true,
-        max:10,
+    },
+    email: {
+        type:String,
+        required:true,
     },
     lat: {
         type:String,

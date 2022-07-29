@@ -2,6 +2,8 @@ const router = require("express").Router();
 const Node = require("../models/node");
 const Pin = require("../models/Pin");
 const cron = require('node-cron');
+var nodemailer = require('nodemailer');
+require('dotenv').config();
 
 //MQTT Broker connection parameters
 const mqtt = require('mqtt')  // require mqtt
@@ -114,7 +116,7 @@ router.get("/lastmacdata",async (req,res)=>{
 
 
 //cron for the daily sheck
-cron.schedule('25 14 * * *', async() => {
+cron.schedule('37 12 * * *', async() => {
   console.log("Daily task to check Pins's status - " + new Date())
   const pins = await Pin.find();
 
@@ -124,11 +126,40 @@ cron.schedule('25 14 * * *', async() => {
     const days = (new Date - new Date(node.received_at))/ (1000 * 3600 * 24);
     if(days >= 3){
       const pin = await Pin.findOne({MAC:node.MAC})
+      //mail information
+      var transporter = nodemailer.createTransport({
+        service: 'hotmail',
+        auth: {
+        user: process.env.sendMail,
+        pass: process.env.sendpass
+        }
+      });
+
+      var mailverif = {
+        from: process.env.sendMail,
+        to: pin.email,
+        subject: 'account activation',
+        html: `<div style="margin: 100px;text-align:center;border: solid 3px black;border-radius: 10px;padding:20px" >
+        <h1>Hello,</h1>
+        <h3>The node <b style="color: #ff7900;">${pin.title}</b> is no longer operating</h3>
+        <h3>Please check and test.</h3>
+        </div>`
+      };
+
       //console.log(pin)
       if (pin.operate == 'Yes'){
         console.log('--> The pin in with title "'+pin.title+'" is no longer operating')
         pin.operate = 'No'
         pin.save()
+
+        //send mail
+          transporter.sendMail(mailverif, function(error, info){
+              if (error) {
+              console.log(error);
+              } else {
+              console.log('Email sent: ' + info.response);
+              }
+          });
       }
     }
     else if(days < 3){
@@ -147,24 +178,24 @@ router.get("/checknode",async (req,res)=>{
   try{
     const node = await Node.findOne({MAC:req.query.MAC}).sort({$natural: -1});
     if(node==null){
-      return res.status(200).json('This node is not operating')
+      return res.status(200).json(pin.title+' is not operating')
     }
 
     const days = (new Date - new Date(node.received_at))/ (1000 * 3600 * 24);
     const pin = await Pin.findOne({MAC:req.query.MAC})
-    if(days >= 3){
+    if(days >= 70){
       if (pin.operate == 'Yes'){
         pin.operate = 'No'
-        await pin.save()
+        pin.save()
       }
-      return res.status(200).json('This node is no longer operating')
+      return res.status(200).json(pin.title+' is no longer operating')
     }
-    else if(days < 3){
+    else if(days < 70){
       if (pin.operate == 'No'){
         pin.operate = 'Yes'
-        await pin.save()
+        pin.save()
       }
-      return res.status(200).json('The node is operating')
+      return res.status(200).json(pin.title+' is operating')
     }
   }catch(err){
     res.status(500).json(err)

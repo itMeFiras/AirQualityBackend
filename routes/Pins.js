@@ -84,6 +84,7 @@ router.post("/add",MID.authenticateToken,(req,res)=>{
             MAC :req.body.MAC,
             title :req.body.title,
             desc :req.body.desc,
+            email:req.body.email,
             lat :req.body.lat,
             long :req.body.long,
         })
@@ -186,6 +187,7 @@ router.post("/request2", MID.authenticateToken, (req,res)=>{
                 title :req.body.title,
                 MAC :req.body.MAC,
                 desc :req.body.desc,
+                email :req.body.email,
                 location :req.body.location,
                 lat :req.body.lat,
                 long :req.body.long,
@@ -274,6 +276,7 @@ router.post("/request/approve/:id",async (req,res)=>{
                 MAC :re.MAC,
                 title :re.title,
                 desc :re.desc,
+                email:re.email,
                 lat :re.lat,
                 long :re.long,
                 operate:"No"
